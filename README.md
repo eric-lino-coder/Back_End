@@ -1,6 +1,6 @@
 # Backend CRUD - Projeto Eric
 
-Backend desenvolvido com **Node.js**, **Express** e **PostgreSQL (Neon)** para gerenciamento de contatos.
+Backend desenvolvido com **Node.js**, **Express** e **PostgreSQL (Neon)** para gerenciamento de usuários.
 
 ## 📋 Estrutura do Projeto
 
