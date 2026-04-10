@@ -1,0 +1,84 @@
+### API CRUD - Arquivo de Testes HTTP
+### Use este arquivo com extensão REST Client do VSCode ou em Postman
+
+@baseURL = http://localhost:5000/api
+
+### ========== CRIAR CONTATO ==========
+
+### Criar um novo contato
+POST {{baseURL}}/contatos
+Content-Type: application/json
+
+{
+  "nome": "João Silva",
+  "cpf": "123.456.789-00",
+  "nascimento": "1990-05-15",
+  "rg": "12.345.678-9",
+  "sexo": "M",
+  "estadoCivil": "Solteiro",
+  "pais": "Brasil",
+  "estado": "SP",
+  "cidade": "São Paulo",
+  "bairro": "Centro",
+  "cep": "01310-100",
+  "logradouro": "Avenida Paulista",
+  "numero": "1000",
+  "complemento": "Apto 101",
+  "celular": "(11) 98765-4321",
+  "fixo": "(11) 3333-4444",
+  "email": "joao@email.com",
+  "linkedin": "linkedin.com/in/joaosilva"
+}
+
+### ========== LISTAR CONTATOS ==========
+
+### Listar todos os contatos (com paginação)
+GET {{baseURL}}/contatos?page=1&limit=10
+
+### ========== OBTER CONTATO ==========
+
+### Obter contato por ID (altere o 1 para o ID desejado)
+GET {{baseURL}}/contatos/1
+
+### Buscar contato por CPF
+GET {{baseURL}}/contatos/search/cpf/123.456.789-00
+
+### Buscar contato por Email
+GET {{baseURL}}/contatos/search/email/joao@email.com
+
+### ========== ATUALIZAR CONTATO ==========
+
+### Atualizar contato (altere o 1 para o ID desejado)
+PUT {{baseURL}}/contatos/1
+Content-Type: application/json
+
+{
+  "nome": "João Silva Santos",
+  "cpf": "123.456.789-00",
+  "nascimento": "1990-05-15",
+  "rg": "12.345.678-9",
+  "sexo": "M",
+  "estadoCivil": "Casado",
+  "pais": "Brasil",
+  "estado": "SP",
+  "cidade": "São Paulo",
+  "bairro": "Vila Mariana",
+  "cep": "04015-030",
+  "logradouro": "Rua Oscar Freire",
+  "numero": "500",
+  "complemento": "Apto 202",
+  "celular": "(11) 99999-8888",
+  "fixo": "(11) 3333-4444",
+  "email": "joao.silva@email.com",
+  "linkedin": "linkedin.com/in/joaosilvasantos"
+}
+
+### ========== DELETAR CONTATO ==========
+
+### Deletar contato (altere o 1 para o ID desejado)
+DELETE {{baseURL}}/contatos/1
+
+### ========== HEALTH CHECK ==========
+
+### Verificar se o servidor está rodando
+GET http://localhost:5000/health
