@@ -1,6 +1,6 @@
 # Backend CRUD - Projeto Eric
 
-Backend desenvolvido com **Node.js**, **Express** e **PostgreSQL (Neon)** para gerenciamento de contatos.
+Backend desenvolvido com **Node.js**, **Express** e **PostgreSQL (Neon)** para gerenciamento de users.
 
 ## 📋 Estrutura do Projeto
 
@@ -8,9 +8,9 @@ Backend desenvolvido com **Node.js**, **Express** e **PostgreSQL (Neon)** para g
 ├── config/
 │   └── database.js          # Configuração de conexão com PostgreSQL
 ├── controllers/
-│   └── contatoController.js # Lógica de negócio (CRUD)
+│   └── userController.js # Lógica de negócio (CRUD)
 ├── routes/
-│   └── contatosRoutes.js    # Definição das rotas da API
+│   └── usersRoutes.js    # Definição das rotas da API
 ├── database/
 │   └── schema.sql           # Schema da tabela
 ├── server.js                # Arquivo principal
@@ -55,11 +55,13 @@ Via Neon console ou pgAdmin:
 ## 🏃 Executar o servidor
 
 ### Modo produção
+
 ```bash
 npm start
 ```
 
 ### Modo desenvolvimento (com auto-reload)
+
 ```bash
 npm run dev
 ```
@@ -69,13 +71,15 @@ O servidor estará rodando em: **http://localhost:5000**
 ## 📡 Endpoints da API
 
 ### Base URL
+
 ```
-http://localhost:5000/api/contatos
+http://localhost:5000/api/users
 ```
 
-### 1. **Criar Contato** (POST)
+### 1. **Criar user** (POST)
+
 ```http
-POST /api/contatos
+POST /api/users
 Content-Type: application/json
 
 {
@@ -101,10 +105,11 @@ Content-Type: application/json
 ```
 
 **Resposta (201 Created):**
+
 ```json
 {
-  "message": "Contato criado com sucesso",
-  "contato": {
+  "message": "user criado com sucesso",
+  "user": {
     "id": 1,
     "nome": "João Silva",
     "cpf": "123.456.789-00",
@@ -113,15 +118,17 @@ Content-Type: application/json
 }
 ```
 
-### 2. **Listar Contatos** (GET)
+### 2. **Listar users** (GET)
+
 ```http
-GET /api/contatos?page=1&limit=10
+GET /api/users?page=1&limit=10
 ```
 
 **Resposta (200 OK):**
+
 ```json
 {
-  "contatos": [
+  "users": [
     {
       "id": 1,
       "nome": "João Silva",
@@ -137,12 +144,14 @@ GET /api/contatos?page=1&limit=10
 }
 ```
 
-### 3. **Obter Contato por ID** (GET)
+### 3. **Obter user por ID** (GET)
+
 ```http
-GET /api/contatos/1
+GET /api/users/1
 ```
 
 **Resposta (200 OK):**
+
 ```json
 {
   "id": 1,
@@ -152,9 +161,10 @@ GET /api/contatos/1
 }
 ```
 
-### 4. **Atualizar Contato** (PUT)
+### 4. **Atualizar user** (PUT)
+
 ```http
-PUT /api/contatos/1
+PUT /api/users/1
 Content-Type: application/json
 
 {
@@ -165,10 +175,11 @@ Content-Type: application/json
 ```
 
 **Resposta (200 OK):**
+
 ```json
 {
-  "message": "Contato atualizado com sucesso",
-  "contato": {
+  "message": "user atualizado com sucesso",
+  "user": {
     "id": 1,
     "nome": "João Silva Santos",
     ...
@@ -176,32 +187,37 @@ Content-Type: application/json
 }
 ```
 
-### 5. **Deletar Contato** (DELETE)
+### 5. **Deletar user** (DELETE)
+
 ```http
-DELETE /api/contatos/1
+DELETE /api/users/1
 ```
 
 **Resposta (200 OK):**
+
 ```json
 {
-  "message": "Contato deletado com sucesso",
+  "message": "user deletado com sucesso",
   "id": 1
 }
 ```
 
 ### 6. **Buscar por CPF** (GET)
+
 ```http
-GET /api/contatos/search/cpf/123.456.789-00
+GET /api/users/search/cpf/123.456.789-00
 ```
 
 ### 7. **Buscar por Email** (GET)
+
 ```http
-GET /api/contatos/search/email/joao@email.com
+GET /api/users/search/email/joao@email.com
 ```
 
 ## 🔧 Configuração do NEON
 
 ### Passo 1: Criar um projeto no Neon
+
 1. Acesse [neon.tech](https://neon.tech)
 2. Faça login ou crie uma conta
 3. Clique em "Create Project"
@@ -209,44 +225,47 @@ GET /api/contatos/search/email/joao@email.com
 5. Configure o nome do projeto e a região
 
 ### Passo 2: Obter a string de conexão
+
 1. No dashboard do Neon, copie a connection string
 2. Cole em `.env` na variável `DATABASE_URL`
 
 Exemplo:
+
 ```
 DATABASE_URL=postgresql://neon_user:password@ep-something.us-east-1.aws.neon.tech/neondb
 ```
 
 ### Passo 3: Executar o schema
+
 ```bash
 psql $DATABASE_URL -f database/schema.sql
 ```
 
-## 📚 Campos da Tabela Contatos
+## 📚 Campos da Tabela users
 
-| Campo | Tipo | Obrigatório | Observações |
-|-------|------|-------------|------------|
-| id | SERIAL | ✅ | PK, Auto-increment |
-| nome | VARCHAR(150) | ✅ | - |
-| cpf | VARCHAR(14) | ✅ | UNIQUE |
-| nascimento | DATE | ❌ | Formato: YYYY-MM-DD |
-| rg | VARCHAR(20) | ❌ | - |
-| sexo | VARCHAR(1) | ❌ | M ou F |
-| estadoCivil | VARCHAR(50) | ❌ | - |
-| pais | VARCHAR(100) | ❌ | - |
-| estado | VARCHAR(2) | ❌ | Sigla: SP, RJ, etc |
-| cidade | VARCHAR(100) | ❌ | - |
-| bairro | VARCHAR(100) | ❌ | - |
-| cep | VARCHAR(9) | ❌ | Formato: 12345-678 |
-| logradouro | VARCHAR(255) | ❌ | - |
-| numero | VARCHAR(20) | ❌ | - |
-| complemento | VARCHAR(255) | ❌ | - |
-| celular | VARCHAR(20) | ❌ | - |
-| fixo | VARCHAR(20) | ❌ | - |
-| email | VARCHAR(150) | ✅ | UNIQUE |
-| linkedin | VARCHAR(255) | ❌ | - |
-| created_at | TIMESTAMP | ✅ | Auto-preenchido |
-| updated_at | TIMESTAMP | ✅ | Auto-atualizado |
+| Campo       | Tipo         | Obrigatório | Observações         |
+| ----------- | ------------ | ----------- | ------------------- |
+| id          | SERIAL       | ✅          | PK, Auto-increment  |
+| nome        | VARCHAR(150) | ✅          | -                   |
+| cpf         | VARCHAR(14)  | ✅          | UNIQUE              |
+| nascimento  | DATE         | ❌          | Formato: YYYY-MM-DD |
+| rg          | VARCHAR(20)  | ❌          | -                   |
+| sexo        | VARCHAR(1)   | ❌          | M ou F              |
+| estadoCivil | VARCHAR(50)  | ❌          | -                   |
+| pais        | VARCHAR(100) | ❌          | -                   |
+| estado      | VARCHAR(2)   | ❌          | Sigla: SP, RJ, etc  |
+| cidade      | VARCHAR(100) | ❌          | -                   |
+| bairro      | VARCHAR(100) | ❌          | -                   |
+| cep         | VARCHAR(9)   | ❌          | Formato: 12345-678  |
+| logradouro  | VARCHAR(255) | ❌          | -                   |
+| numero      | VARCHAR(20)  | ❌          | -                   |
+| complemento | VARCHAR(255) | ❌          | -                   |
+| celular     | VARCHAR(20)  | ❌          | -                   |
+| fixo        | VARCHAR(20)  | ❌          | -                   |
+| email       | VARCHAR(150) | ✅          | UNIQUE              |
+| linkedin    | VARCHAR(255) | ❌          | -                   |
+| created_at  | TIMESTAMP    | ✅          | Auto-preenchido     |
+| updated_at  | TIMESTAMP    | ✅          | Auto-atualizado     |
 
 ## ✨ Validações
 
@@ -257,7 +276,7 @@ psql $DATABASE_URL -f database/schema.sql
 ## 🛡️ Tratamento de Erros
 
 - `400`: Request inválido
-- `404`: Contato não encontrado
+- `404`: user não encontrado
 - `409`: Conflito (CPF ou Email já existe)
 - `500`: Erro interno do servidor
 
@@ -266,11 +285,11 @@ psql $DATABASE_URL -f database/schema.sql
 Use **Postman**, **Insomnia** ou **cURL**:
 
 ```bash
-# Listar contatos
-curl http://localhost:5000/api/contatos
+# Listar users
+curl http://localhost:5000/api/users
 
-# Criar contato (exemplo)
-curl -X POST http://localhost:5000/api/contatos \
+# Criar user (exemplo)
+curl -X POST http://localhost:5000/api/users \
   -H "Content-Type: application/json" \
   -d '{
     "nome": "Maria Silva",
