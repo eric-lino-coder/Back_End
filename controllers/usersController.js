@@ -1,7 +1,8 @@
 import pool from "../config/database.js";
+import * as bcrypt from "bcrypt";
 
-// CREATE - Criar novo contato
-export async function criarContato(req, res) {
+// CREATE - Criar novo user
+export async function criaruser(req, res) {
   const {
     nome,
     cpf,
@@ -24,19 +25,68 @@ export async function criarContato(req, res) {
   } = req.body;
 
   try {
+    const raw_password = "Easycad@1234"; // Pegar da .env
     // Validações básicas
     if (!nome || !cpf || !email) {
       return res
         .status(400)
         .json({ error: "Nome, CPF e Email são obrigatórios" });
     }
-
+    // Gerar Hash da senha, transformar a varipavel raw_password em password
+    //  custo do hash (quanto maior, mais seguro e mais lento)
+    const saltRounds = 10;
+    //  senha de exemplo
+    //  1. Gerando SALT manualmente
+    const salt = await bcrypt.genSalt(saltRounds);
+    //  2. Criando HASH da senha
+    const password_hash = await bcrypt.hash(raw_password, salt);
     const query = `
-      INSERT INTO contatos 
-      (nome, cpf, nascimento, rg, sexo, estadoCivil, pais, estado, cidade,
-       bairro, cep, logradouro, numero, complemento, celular, fixo, email, linkedin, created_at)
+      INSERT INTO users 
+        (
+          nome, 
+          cpf,
+          nascimento,
+          rg,
+          sexo,
+          estadoCivil,
+          pais,
+          estado,
+          cidade,   
+          bairro,
+          cep,
+          logradouro,
+          numero,
+          complemento,
+          celular,
+          fixo,
+          email,
+          linkedin,
+          password_hash,
+          created_at
+        )
       VALUES 
-      ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, NOW())
+      (
+        $1,
+        $2,
+        $3,
+        $4,
+        $5,
+        $6,
+        $7,
+        $8,
+        $9,
+        $10,
+        $11,
+        $12,
+        $13,
+        $14,
+        $15,
+        $16,
+        $17,
+        $18,
+        $19,
+        NOW()
+      )
       RETURNING *
     `;
 
@@ -59,35 +109,36 @@ export async function criarContato(req, res) {
       fixo,
       email,
       linkedin,
+      password_hash,
     ];
 
     const result = await pool.query(query, values);
     res
       .status(201)
-      .json({ message: "Contato criado com sucesso", contato: result.rows[0] });
+      .json({ message: "user criado com sucesso", user: result.rows[0] });
   } catch (error) {
-    console.error("Erro ao criar contato:", error);
+    console.error("Erro ao criar user:", error);
     if (error.code === "23505") {
       res.status(409).json({ error: "CPF ou Email já existe" });
     } else {
-      res.status(500).json({ error: "Erro ao criar contato" });
+      res.status(500).json({ error: "Erro ao criar user" });
     }
   }
 }
 
-// READ - Listar todos os contatos
-export async function listarContatos(req, res) {
+// READ - Listar todos os users
+export async function listarusers(req, res) {
   try {
     const { page = 1, limit = 10 } = req.query;
     const offset = (page - 1) * limit;
 
     const query = `
-      SELECT * FROM contatos 
+      SELECT * FROM users 
       ORDER BY created_at DESC
       LIMIT $1 OFFSET $2
     `;
 
-    const countQuery = "SELECT COUNT(*) FROM contatos";
+    const countQuery = "SELECT COUNT(*) FROM users";
 
     const [result, countResult] = await Promise.all([
       pool.query(query, [limit, offset]),
@@ -98,7 +149,7 @@ export async function listarContatos(req, res) {
     const totalPages = Math.ceil(total / limit);
 
     res.json({
-      contatos: result.rows,
+      users: result.rows,
       paginacao: {
         total,
         pagina: parseInt(page),
@@ -107,32 +158,32 @@ export async function listarContatos(req, res) {
       },
     });
   } catch (error) {
-    console.error("Erro ao listar contatos:", error);
-    res.status(500).json({ error: "Erro ao listar contatos" });
+    console.error("Erro ao listar users:", error);
+    res.status(500).json({ error: "Erro ao listar users" });
   }
 }
 
-// READ - Obter contato por ID
-export async function obterContatoPorId(req, res) {
+// READ - Obter user por ID
+export async function obteruserPorId(req, res) {
   const { id } = req.params;
 
   try {
-    const query = "SELECT * FROM contatos WHERE id = $1";
+    const query = "SELECT * FROM users WHERE id = $1";
     const result = await pool.query(query, [id]);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Contato não encontrado" });
+      return res.status(404).json({ error: "user não encontrado" });
     }
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error("Erro ao obter contato:", error);
-    res.status(500).json({ error: "Erro ao obter contato" });
+    console.error("Erro ao obter user:", error);
+    res.status(500).json({ error: "Erro ao obter user" });
   }
 }
 
-// UPDATE - Atualizar contato
-export async function atualizarContato(req, res) {
+// UPDATE - Atualizar user
+export async function atualizaruser(req, res) {
   const { id } = req.params;
   const {
     nome,
@@ -157,7 +208,7 @@ export async function atualizarContato(req, res) {
 
   try {
     const query = `
-      UPDATE contatos 
+      UPDATE users 
       SET nome = $1, cpf = $2, nascimento = $3, rg = $4, sexo = $5, 
           estadoCivil = $6, pais = $7, estado = $8, cidade = $9,
           bairro = $10, cep = $11, logradouro = $12, numero = $13, 
@@ -192,44 +243,42 @@ export async function atualizarContato(req, res) {
     const result = await pool.query(query, values);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Contato não encontrado" });
+      return res.status(404).json({ error: "user não encontrado" });
     }
 
     res.json({
-      message: "Contato atualizado com sucesso",
-      contato: result.rows[0],
+      message: "user atualizado com sucesso",
+      user: result.rows[0],
     });
   } catch (error) {
-    console.error("Erro ao atualizar contato:", error);
+    console.error("Erro ao atualizar user:", error);
     if (error.code === "23505") {
-      res
-        .status(409)
-        .json({ error: "CPF ou Email já existe para outro contato" });
+      res.status(409).json({ error: "CPF ou Email já existe para outro user" });
     } else {
-      res.status(500).json({ error: "Erro ao atualizar contato" });
+      res.status(500).json({ error: "Erro ao atualizar user" });
     }
   }
 }
 
-// DELETE - Deletar contato
-export async function deletarContato(req, res) {
+// DELETE - Deletar user
+export async function deletaruser(req, res) {
   const { id } = req.params;
 
   try {
-    const query = "DELETE FROM contatos WHERE id = $1 RETURNING id";
+    const query = "DELETE FROM users WHERE id = $1 RETURNING id";
     const result = await pool.query(query, [id]);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Contato não encontrado" });
+      return res.status(404).json({ error: "user não encontrado" });
     }
 
     res.json({
-      message: "Contato deletado com sucesso",
+      message: "user deletado com sucesso",
       id: result.rows[0].id,
     });
   } catch (error) {
-    console.error("Erro ao deletar contato:", error);
-    res.status(500).json({ error: "Erro ao deletar contato" });
+    console.error("Erro ao deletar user:", error);
+    res.status(500).json({ error: "Erro ao deletar user" });
   }
 }
 
@@ -238,17 +287,17 @@ export async function buscarPorCPF(req, res) {
   const { cpf } = req.params;
 
   try {
-    const query = "SELECT * FROM contatos WHERE cpf = $1";
+    const query = "SELECT * FROM users WHERE cpf = $1";
     const result = await pool.query(query, [cpf]);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Contato não encontrado" });
+      return res.status(404).json({ error: "user não encontrado" });
     }
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error("Erro ao buscar contato:", error);
-    res.status(500).json({ error: "Erro ao buscar contato" });
+    console.error("Erro ao buscar user:", error);
+    res.status(500).json({ error: "Erro ao buscar user" });
   }
 }
 
@@ -257,16 +306,16 @@ export async function buscarPorEmail(req, res) {
   const { email } = req.params;
 
   try {
-    const query = "SELECT * FROM contatos WHERE email = $1";
+    const query = "SELECT * FROM users WHERE email = $1";
     const result = await pool.query(query, [email]);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Contato não encontrado" });
+      return res.status(404).json({ error: "user não encontrado" });
     }
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error("Erro ao buscar contato:", error);
-    res.status(500).json({ error: "Erro ao buscar contato" });
+    console.error("Erro ao buscar user:", error);
+    res.status(500).json({ error: "Erro ao buscar user" });
   }
 }

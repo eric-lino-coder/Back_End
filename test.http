@@ -3,10 +3,10 @@
 
 @baseURL = http://localhost:5000/api
 
-### ========== CRIAR CONTATO ==========
+### ========== CRIAR user ==========
 
-### Criar um novo contato
-POST {{baseURL}}/contatos
+### Criar um novo user
+POST {{baseURL}}/users
 Content-Type: application/json
 
 {
@@ -30,26 +30,26 @@ Content-Type: application/json
   "linkedin": "linkedin.com/in/joaosilva"
 }
 
-### ========== LISTAR CONTATOS ==========
+### ========== LISTAR users ==========
 
-### Listar todos os contatos (com paginação)
-GET {{baseURL}}/contatos?page=1&limit=10
+### Listar todos os users (com paginação)
+GET {{baseURL}}/users?page=1&limit=10
 
-### ========== OBTER CONTATO ==========
+### ========== OBTER user ==========
 
-### Obter contato por ID (altere o 1 para o ID desejado)
-GET {{baseURL}}/contatos/1
+### Obter user por ID (altere o 1 para o ID desejado)
+GET {{baseURL}}/users/1
 
-### Buscar contato por CPF
-GET {{baseURL}}/contatos/search/cpf/123.456.789-00
+### Buscar user por CPF
+GET {{baseURL}}/users/search/cpf/123.456.789-00
 
-### Buscar contato por Email
-GET {{baseURL}}/contatos/search/email/joao@email.com
+### Buscar user por Email
+GET {{baseURL}}/users/search/email/joao@email.com
 
-### ========== ATUALIZAR CONTATO ==========
+### ========== ATUALIZAR user ==========
 
-### Atualizar contato (altere o 1 para o ID desejado)
-PUT {{baseURL}}/contatos/1
+### Atualizar user (altere o 1 para o ID desejado)
+PUT {{baseURL}}/users/1
 Content-Type: application/json
 
 {
@@ -73,10 +73,10 @@ Content-Type: application/json
   "linkedin": "linkedin.com/in/joaosilvasantos"
 }
 
-### ========== DELETAR CONTATO ==========
+### ========== DELETAR user ==========
 
-### Deletar contato (altere o 1 para o ID desejado)
-DELETE {{baseURL}}/contatos/1
+### Deletar user (altere o 1 para o ID desejado)
+DELETE {{baseURL}}/users/1
 
 ### ========== HEALTH CHECK ==========
 
