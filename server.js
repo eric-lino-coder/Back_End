@@ -3,8 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import userRoutes from "./routes/usersRoutes.js";
 import authRoutes from "./routes/auth.js";
-
 dotenv.config();
+import { authMiddleware } from "./middlewares/authMiddleware";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -18,7 +18,7 @@ app.use(
 app.use(express.json());
 
 // Rotas
-app.use("/api/users", userRoutes);
+app.use("/api/users", authMiddleware, userRoutes);
 app.use("/api/auth", authRoutes);
 
 // Rota de health check
