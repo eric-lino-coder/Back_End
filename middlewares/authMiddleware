@@ -1,16 +1,11 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 
 export function authMiddleware(req, res, next) {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies.token;
 
-  // Verifica se existe o header
-  if (!authHeader) {
+  if (!token) {
     return res.status(401).json({ erro: "Token não fornecido" });
   }
-
-  // Formato: "Bearer TOKEN"
-  const token = authHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

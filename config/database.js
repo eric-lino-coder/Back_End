@@ -23,7 +23,8 @@ pool.query("SELECT NOW()", (err, res) => {
     );
   }
 });
--pool.on("error", (err) => {
+
+pool.on("error", (err) => {
   console.error("Unexpected error on idle client", err);
 });
 

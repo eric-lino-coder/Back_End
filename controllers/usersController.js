@@ -25,14 +25,14 @@ export async function criaruser(req, res) {
   } = req.body;
 
   try {
-    const raw_password = "Easycad@1234"; // Pegar da .env
+    const raw_password = process.env.DEFAULT_PASSWORD || "Easycad@1234";
     // Validações básicas
     if (!nome || !cpf || !email) {
       return res
         .status(400)
         .json({ error: "Nome, CPF e Email são obrigatórios" });
     }
-    // Gerar Hash da senha, transformar a varipavel raw_password em password
+    // Gerar Hash da senha, transformar a variavel raw_password em password
     //  custo do hash (quanto maior, mais seguro e mais lento)
     const saltRounds = 10;
     //  senha de exemplo
