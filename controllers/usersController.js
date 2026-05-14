@@ -147,7 +147,7 @@ export async function listarusers(req, res) {
 
     const total = parseInt(countResult.rows[0].count);
     const totalPages = Math.ceil(total / limit);
-
+    console.log("dados do back end", result.rows);
     res.json({
       users: result.rows,
       paginacao: {
